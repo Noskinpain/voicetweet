@@ -5,6 +5,7 @@ import {
   AccountProfile,
   TrainedTweet,
 } from "@/types";
+import { supabase } from "./supabase";
 
 const KEYS = {
   voice: "vt_voice",
@@ -13,14 +14,56 @@ const KEYS = {
   account: "vt_account",
 };
 
+// Background Cloud Sync - fire and forget
+const syncToCloud = async () => {
+  if (typeof window === "undefined") return;
+  const v = localStorage.getItem(KEYS.account);
+  if (!v) return;
+  
+  const acc = JSON.parse(v) as AccountProfile;
+  if (!acc.email) return;
+
+  const payload = {
+    email: acc.email,
+    name: acc.name,
+    handle: acc.handle,
+    voice_profile: storage.getVoice(),
+    history: storage.getHistory(),
+    scheduled: storage.getScheduled(),
+    trained_tweets: storage.getTrainedTweets(),
+  };
+
+  await supabase.from("account_data").upsert(payload, { onConflict: "email" });
+};
+
 export const storage = {
+  pullFromCloud: async (email: string) => {
+    const { data, error } = await supabase
+      .from("account_data")
+      .select("*")
+      .eq("email", email)
+      .single();
+
+    if (data) {
+      storage.setAccount({ name: data.name || "", handle: data.handle || "", email: data.email });
+      if (data.voice_profile) localStorage.setItem(KEYS.voice, JSON.stringify(data.voice_profile));
+      if (data.history) localStorage.setItem(KEYS.history, JSON.stringify(data.history));
+      if (data.scheduled) localStorage.setItem(KEYS.scheduled, JSON.stringify(data.scheduled));
+      if (data.trained_tweets) localStorage.setItem("vt_trained", JSON.stringify(data.trained_tweets));
+      return true;
+    }
+    return false;
+  },
+
   getVoice: (): VoiceProfile | null => {
     if (typeof window === "undefined") return null;
     const v = localStorage.getItem(KEYS.voice);
     return v ? JSON.parse(v) : null;
   },
-  setVoice: (v: VoiceProfile) =>
-    localStorage.setItem(KEYS.voice, JSON.stringify(v)),
+  setVoice: (v: VoiceProfile) => {
+    localStorage.setItem(KEYS.voice, JSON.stringify(v));
+    syncToCloud();
+  },
 
   getHistory: (): GenerationEntry[] => {
     if (typeof window === "undefined") return [];
@@ -31,6 +74,7 @@ export const storage = {
     const existing = storage.getHistory();
     const updated = [entry, ...existing].slice(0, 100);
     localStorage.setItem(KEYS.history, JSON.stringify(updated));
+    syncToCloud();
   },
 
   getScheduled: (): ScheduledPost[] => {
@@ -41,10 +85,12 @@ export const storage = {
   addScheduled: (post: ScheduledPost) => {
     const existing = storage.getScheduled();
     localStorage.setItem(KEYS.scheduled, JSON.stringify([...existing, post]));
+    syncToCloud();
   },
   deleteScheduled: (id: string) => {
     const updated = storage.getScheduled().filter((p) => p.id !== id);
     localStorage.setItem(KEYS.scheduled, JSON.stringify(updated));
+    syncToCloud();
   },
 
   getAccount: (): AccountProfile => {
@@ -52,8 +98,10 @@ export const storage = {
     const v = localStorage.getItem(KEYS.account);
     return v ? JSON.parse(v) : { name: "", handle: "" };
   },
-  setAccount: (a: AccountProfile) =>
-    localStorage.setItem(KEYS.account, JSON.stringify(a)),
+  setAccount: (a: AccountProfile) => {
+    localStorage.setItem(KEYS.account, JSON.stringify(a));
+    syncToCloud();
+  },
 
   getTrainedTweets: (): TrainedTweet[] => {
     if (typeof window === "undefined") return [];
@@ -64,9 +112,11 @@ export const storage = {
     const existing = storage.getTrainedTweets();
     const updated = [tweet, ...existing].slice(0, 200);
     localStorage.setItem("vt_trained", JSON.stringify(updated));
+    syncToCloud();
   },
   deleteTrainedTweet: (id: string) => {
     const updated = storage.getTrainedTweets().filter((t) => t.id !== id);
     localStorage.setItem("vt_trained", JSON.stringify(updated));
+    syncToCloud();
   },
 };

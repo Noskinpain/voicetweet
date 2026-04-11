@@ -51,6 +51,7 @@ export interface ScheduledPost {
 export interface AccountProfile {
   name: string;
   handle: string;
+  email?: string;
 }
 
 export interface InterviewAnswer {

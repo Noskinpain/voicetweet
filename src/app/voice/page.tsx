@@ -137,6 +137,39 @@ export default function VoicePage() {
               className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono text-gray-800 outline-none focus:border-emerald-400 transition-all"
             />
           </div>
+
+          <div className="sm:col-span-2 pt-3 border-t border-gray-100">
+            <label className="text-xs font-semibold text-gray-500 block mb-1.5">
+              Cloud Sync Email <span className="text-emerald-500 font-normal ml-1">Recommended</span>
+            </label>
+            <p className="text-xs text-gray-400 mb-2">
+              Enter an email to continuously back up your voice profile and trained tweets to the cloud. You can use this email to restore your profile on any other device.
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="email"
+                value={account.email || ''}
+                onChange={(e) => setAccount({ ...account, email: e.target.value })}
+                placeholder="you@email.com"
+                className="w-full bg-gray-50 border border-emerald-100 rounded-lg px-3 py-2 text-sm font-mono text-gray-800 outline-none focus:border-emerald-400 transition-all focus:bg-emerald-50"
+              />
+              <button 
+                onClick={async () => {
+                  if(!account.email) return;
+                  const res = await storage.pullFromCloud(account.email);
+                  if (res) {
+                    setSaved(true); 
+                    setTimeout(() => window.location.reload(), 1000);
+                  } else {
+                    alert('No cloud profile found for this email.');
+                  }
+                }}
+                className="px-4 bg-gray-800 hover:bg-gray-900 text-white text-sm font-bold rounded-lg whitespace-nowrap transition-all"
+              >
+                Restore
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
