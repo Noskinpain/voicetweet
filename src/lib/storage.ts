@@ -45,7 +45,9 @@ export const storage = {
       .single();
 
     if (data) {
-      storage.setAccount({ name: data.name || "", handle: data.handle || "", email: data.email });
+      // Must use direct localStorage so we don't instantly trigger a syncToCloud() loop 
+      // that uploads our current empty cache over the beautiful cloud data we just pulled down!
+      localStorage.setItem(KEYS.account, JSON.stringify({ name: data.name || "", handle: data.handle || "", email: data.email }));
       if (data.voice_profile) localStorage.setItem(KEYS.voice, JSON.stringify(data.voice_profile));
       if (data.history) localStorage.setItem(KEYS.history, JSON.stringify(data.history));
       if (data.scheduled) localStorage.setItem(KEYS.scheduled, JSON.stringify(data.scheduled));

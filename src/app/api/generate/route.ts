@@ -8,6 +8,8 @@ import {
 } from '@/lib/prompts'
 import { VoiceProfile, ToneSettings, OutputFormat, TweetLength, CaptionType } from '@/types'
 
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
