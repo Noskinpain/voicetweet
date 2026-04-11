@@ -32,8 +32,7 @@ export default function RootLayout({
         className={`${geist.variable} ${geistMono.variable} antialiased bg-gray-50 min-h-screen`}
       >
         <Navbar />
-        <div className="h-14 w-full md:hidden"></div>
-        <main className="max-w-5xl mx-auto px-4 py-8">{children}</main>
+        <main className="max-w-5xl mx-auto px-4 py-8 mt-14">{children}</main>
       </body>
     </html>
   )
