@@ -156,7 +156,7 @@ export default function ViralPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black tracking-tight text-gray-900">
             Viral Feed
@@ -165,7 +165,7 @@ export default function ViralPage() {
             Fresh viral-ready tweets for your niche, every time you visit.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap sm:flex-nowrap gap-2 w-full sm:w-auto">
           <button
             onClick={() => setShowTrainer(!showTrainer)}
             className={`px-4 py-2 rounded-xl border text-xs font-bold transition-all ${
@@ -202,7 +202,7 @@ export default function ViralPage() {
             </p>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <textarea
               rows={2}
               value={newTweet}
@@ -213,7 +213,7 @@ export default function ViralPage() {
             <button
               onClick={addToTrainer}
               disabled={addingTweet || !newTweet.trim()}
-              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-200 text-white text-xs font-bold rounded-lg transition-all self-start mt-0.5 whitespace-nowrap"
+              className="w-full sm:w-auto px-4 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-200 text-white text-xs font-bold rounded-lg transition-all sm:self-start mt-0.5 whitespace-nowrap"
             >
               {addingTweet ? "Analyzing..." : "Add + Analyze"}
             </button>
@@ -344,8 +344,8 @@ export default function ViralPage() {
               <p className="text-sm text-gray-800 font-mono leading-relaxed whitespace-pre-wrap mb-3">
                 {tweet.content}
               </p>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-full">
                     {tweet.pattern}
                   </span>
@@ -353,7 +353,7 @@ export default function ViralPage() {
                     {tweet.topic}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                <div className="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all flex-wrap">
                   <button
                     onClick={() => copyTweet(tweet.id, tweet.content)}
                     className="text-xs font-semibold text-gray-500 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-lg transition-all"

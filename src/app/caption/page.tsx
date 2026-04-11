@@ -184,7 +184,7 @@ export default function CaptionPage() {
             <label className="text-xs font-bold tracking-widest uppercase text-gray-400 block mb-3">
               Caption length
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {([
                 { value: 'short', label: 'Short', desc: 'Under 100' },
                 { value: 'medium', label: 'Medium', desc: '100–200' },

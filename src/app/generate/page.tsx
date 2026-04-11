@@ -185,7 +185,7 @@ export default function GeneratePage() {
           <label className="text-xs font-bold tracking-widest uppercase text-gray-400 block mb-3">
             Output format
           </label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {(
               [
                 { fmt: "tweet", icon: "✦", desc: "280 chars" },
@@ -217,7 +217,7 @@ export default function GeneratePage() {
           <label className="text-xs font-bold tracking-widest uppercase text-gray-400 block mb-3">
             Tweet length
           </label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {(
               [
                 { value: "short", label: "Short", desc: "Under 100" },

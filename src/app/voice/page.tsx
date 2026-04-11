@@ -77,7 +77,7 @@ export default function VoicePage() {
 
       {/* Interview CTA */}
       {!voice.interviewDone ? (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 flex items-center justify-between">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <p className="text-sm font-bold text-emerald-800">
               Build your deep voice profile
@@ -88,13 +88,13 @@ export default function VoicePage() {
           </div>
           <a
             href="/voice/interview"
-            className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-bold rounded-lg transition-all whitespace-nowrap"
+            className="w-full sm:w-auto text-center px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-bold rounded-lg transition-all whitespace-nowrap"
           >
             Start interview →
           </a>
         </div>
       ) : (
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-center justify-between">
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <p className="text-sm font-semibold text-gray-600">
             Voice interview complete ✓
           </p>
@@ -112,7 +112,7 @@ export default function VoicePage() {
         <h2 className="text-xs font-bold tracking-widest uppercase text-gray-400">
           Account
         </h2>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-semibold text-gray-500 block mb-1.5">
               Display name

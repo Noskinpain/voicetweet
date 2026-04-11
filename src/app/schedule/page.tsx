@@ -101,7 +101,7 @@ export default function SchedulePage() {
           {/* Format */}
           <div>
             <label className="text-xs font-semibold text-gray-500 block mb-2">Format</label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {(['tweet', 'thread', 'article'] as OutputFormat[]).map((f) => (
                 <button
                   key={f}
@@ -133,7 +133,7 @@ export default function SchedulePage() {
           </div>
 
           {/* Date + Time */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-semibold text-gray-500 block mb-1.5">Date</label>
               <input
@@ -209,7 +209,7 @@ export default function SchedulePage() {
                         key={s.id}
                         className="bg-white border border-gray-200 rounded-xl p-4"
                       >
-                        <div className="flex items-center justify-between mb-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
                           <div className="flex items-center gap-2">
                             <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${FORMAT_COLORS[s.format]}`}>
                               {s.format}
@@ -249,7 +249,7 @@ export default function SchedulePage() {
                         key={s.id}
                         className="bg-white border border-gray-200 rounded-xl p-4"
                       >
-                        <div className="flex items-center justify-between mb-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
                           <div className="flex items-center gap-2">
                             <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${FORMAT_COLORS[s.format]}`}>
                               {s.format}

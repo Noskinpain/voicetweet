@@ -41,8 +41,8 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="border-b border-gray-100 bg-white sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-4 flex items-center justify-between h-14">
+      <nav className="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-100">
+        <div className="max-w-5xl mx-auto px-4 flex items-center justify-between h-14 relative z-50 bg-white">
           {/* Logo */}
           <Link
             href="/generate"
@@ -87,18 +87,24 @@ export default function Navbar() {
 
             {/* Hamburger */}
             <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-gray-50 transition-all"
+              type="button"
+              aria-label="Toggle mobile menu"
+              onClick={() => setMenuOpen((prev) => !prev)}
+              className="md:hidden p-2 -mr-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-all cursor-pointer touch-manipulation relative z-[70] pointer-events-auto"
             >
-              <span
-                className={`block w-5 h-0.5 bg-gray-600 transition-all ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
-              />
-              <span
-                className={`block w-5 h-0.5 bg-gray-600 transition-all ${menuOpen ? "opacity-0" : ""}`}
-              />
-              <span
-                className={`block w-5 h-0.5 bg-gray-600 transition-all ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
-              />
+              <svg 
+                className="w-6 h-6 text-gray-700 pointer-events-none" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {menuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16m-7 6h7" />
+                )}
+              </svg>
             </button>
           </div>
         </div>
@@ -106,12 +112,13 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div
-          className="md:hidden fixed inset-0 z-40 bg-black/40"
-          onClick={() => setMenuOpen(false)}
-        >
+        <>
           <div
-            className="absolute top-14 left-0 right-0 bg-white border-b border-gray-100 shadow-lg"
+            className="md:hidden fixed inset-0 z-40 bg-black/40"
+            onClick={() => setMenuOpen(false)}
+          />
+          <div
+            className="md:hidden fixed top-14 left-0 right-0 bg-white shadow-xl z-[60] border-b border-gray-100 flex flex-col max-h-[calc(100vh-3.5rem)] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {links.map((l) => (
@@ -137,7 +144,7 @@ export default function Navbar() {
               </Link>
             ))}
           </div>
-        </div>
+        </>
       )}
     </>
   );

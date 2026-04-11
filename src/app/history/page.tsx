@@ -71,7 +71,7 @@ export default function HistoryPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           { label: 'Total', value: stats.total },
           { label: 'Tweets', value: stats.tweets },
@@ -89,7 +89,7 @@ export default function HistoryPage() {
       </div>
 
       {/* Filter */}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {(['all', 'tweet', 'thread', 'article'] as const).map((f) => (
           <button
             key={f}
@@ -133,8 +133,8 @@ export default function HistoryPage() {
                     : 'border-gray-200'
                 }`}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${FORMAT_COLORS[h.format]}`}>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${FORMAT_COLORS[h.format]} w-fit`}>
                     {h.format}
                   </span>
                   <span className="text-xs text-gray-400 font-mono">{h.date}</span>
@@ -150,11 +150,11 @@ export default function HistoryPage() {
           {/* Preview */}
           {selected ? (
             <div className="bg-white border border-gray-200 rounded-xl overflow-hidden sticky top-20 h-fit">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${FORMAT_COLORS[selected.format]}`}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 border-b border-gray-100">
+                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${FORMAT_COLORS[selected.format]} w-fit`}>
                   {selected.format}
                 </span>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={copy}
                     className="text-xs font-semibold text-gray-500 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-lg transition-all"
