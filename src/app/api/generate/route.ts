@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      { error: 'All models busy. Try again in a moment.' },
+      { error: lastError instanceof Error ? lastError.message : (lastError?.error?.message || 'All models busy. Try again in a moment.') },
       { status: 503 }
     )
 

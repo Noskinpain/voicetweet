@@ -13,7 +13,7 @@ export const openrouter = new OpenAI({
 // When you're ready to switch to Claude, just change this one line to:
 // 'anthropic/claude-sonnet-4-5'
 export const MODELS = [
-  'google/gemini-2.5-flash',
-  'meta-llama/llama-3.1-8b-instruct',
-  'anthropic/claude-3-haiku',
+  'meta-llama/llama-3.3-70b-instruct:free',
+  'google/gemma-3-27b-it:free',
+  'openrouter/free',
 ]

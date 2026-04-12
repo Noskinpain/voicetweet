@@ -7,9 +7,13 @@ import {
 } from "@/types";
 import { VIRAL_PATTERNS, THREAD_STRUCTURES } from "./viralPatterns";
 
-export function buildDeepVoiceContext(v: VoiceProfile): string {
+export function buildDeepVoiceContext(v: VoiceProfile, isReply: boolean = false): string {
   if (!v?.bio)
     return "Write in an authentic, direct, human voice. No corporate speak. No generic advice.";
+
+  const hotTakeInstruction = isReply 
+    ? "These are their REAL beliefs. If relevant to the conversation, weave them in. Do NOT forcefully hijack the reply with these opinions if it is off-topic to the original tweet."
+    : "These are their REAL beliefs. Write FROM these, not around them.";
 
   return `
 YOU ARE GHOSTWRITING FOR THIS EXACT PERSON. STUDY EVERY DETAIL.
@@ -33,7 +37,7 @@ ${v.sentenceStyle || "direct, no fluff, gets to the point fast"}
 
 ═══ THEIR ACTUAL HOT TAKES & OPINIONS ═══
 ${v.hotTakes || "they challenge mainstream thinking"}
-These are their REAL beliefs. Write FROM these, not around them.
+${hotTakeInstruction}
 
 ═══ HOW THEY USE HUMOUR ═══
 ${v.humourStyle || "dry, sharp, never forced"}
@@ -198,7 +202,7 @@ export function buildReplyPrompt(
   tone: ToneSettings,
   length: TweetLength,
 ): string {
-  const voiceCtx = buildDeepVoiceContext(voiceProfile as VoiceProfile);
+  const voiceCtx = buildDeepVoiceContext(voiceProfile as VoiceProfile, true);
   const toneCtx = buildToneInstructions(tone);
   const lengthCtx = getLengthInstruction(length, "tweet");
 
