@@ -5,7 +5,7 @@ import {
   AccountProfile,
   TrainedTweet,
 } from "@/types";
-import { supabase } from "./supabase";
+import { supabase, isSupabaseConfigured } from "./supabase";
 
 const KEYS = {
   voice: "vt_voice",
@@ -16,7 +16,7 @@ const KEYS = {
 
 // Background Cloud Sync - fire and forget
 const syncToCloud = async () => {
-  if (typeof window === "undefined") return;
+  if (!isSupabaseConfigured || typeof window === "undefined") return;
   const v = localStorage.getItem(KEYS.account);
   if (!v) return;
   
@@ -33,28 +33,38 @@ const syncToCloud = async () => {
     trained_tweets: storage.getTrainedTweets(),
   };
 
-  await supabase.from("account_data").upsert(payload, { onConflict: "email" });
+  try {
+    await supabase.from("account_data").upsert(payload, { onConflict: "email" });
+  } catch (err) {
+    console.warn("Supabase sync error:", err);
+  }
 };
 
 export const storage = {
   pullFromCloud: async (email: string) => {
-    const { data, error } = await supabase
-      .from("account_data")
-      .select("*")
-      .eq("email", email)
-      .single();
+    if (!isSupabaseConfigured) return false;
+    try {
+      const { data, error } = await supabase
+        .from("account_data")
+        .select("*")
+        .eq("email", email)
+        .single();
 
-    if (data) {
-      // Must use direct localStorage so we don't instantly trigger a syncToCloud() loop 
-      // that uploads our current empty cache over the beautiful cloud data we just pulled down!
-      localStorage.setItem(KEYS.account, JSON.stringify({ name: data.name || "", handle: data.handle || "", email: data.email }));
-      if (data.voice_profile) localStorage.setItem(KEYS.voice, JSON.stringify(data.voice_profile));
-      if (data.history) localStorage.setItem(KEYS.history, JSON.stringify(data.history));
-      if (data.scheduled) localStorage.setItem(KEYS.scheduled, JSON.stringify(data.scheduled));
-      if (data.trained_tweets) localStorage.setItem("vt_trained", JSON.stringify(data.trained_tweets));
-      return true;
+      if (data) {
+        // Must use direct localStorage so we don't instantly trigger a syncToCloud() loop 
+        // that uploads our current empty cache over the beautiful cloud data we just pulled down!
+        localStorage.setItem(KEYS.account, JSON.stringify({ name: data.name || "", handle: data.handle || "", email: data.email }));
+        if (data.voice_profile) localStorage.setItem(KEYS.voice, JSON.stringify(data.voice_profile));
+        if (data.history) localStorage.setItem(KEYS.history, JSON.stringify(data.history));
+        if (data.scheduled) localStorage.setItem(KEYS.scheduled, JSON.stringify(data.scheduled));
+        if (data.trained_tweets) localStorage.setItem("vt_trained", JSON.stringify(data.trained_tweets));
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.warn("Supabase pull error:", err);
+      return false;
     }
-    return false;
   },
 
   getVoice: (): VoiceProfile | null => {
