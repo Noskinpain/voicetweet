@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import ToneSliders from "@/components/ToneSliders";
 import OutputBox from "@/components/OutputBox";
+import DemoPersonaPicker from "@/components/DemoPersonaPicker";
 import { storage } from "@/lib/storage";
 import {
   OutputFormat,
@@ -111,7 +112,13 @@ export default function GeneratePage() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="space-y-6">
+      <DemoPersonaPicker
+        currentBio={voiceProfile?.bio}
+        onPersonaLoaded={(newVoice) => setVoiceProfile(newVoice)}
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* LEFT COLUMN */}
       <div className="space-y-4">
         {/* Topic */}
@@ -256,15 +263,52 @@ export default function GeneratePage() {
         <button
           onClick={() => generate()}
           disabled={loading}
-          className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-300 text-white font-bold rounded-xl transition-all text-sm tracking-wide"
+          className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-300 text-white font-bold rounded-xl transition-all text-sm tracking-wide shadow-xs active:scale-[0.99]"
         >
-          {loading ? "Writing..." : "Generate →"}
+          {loading ? (
+            <span className="inline-flex items-center gap-2">
+              <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              Writing...
+            </span>
+          ) : (
+            "Generate"
+          )}
         </button>
 
         {error && (
           <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg px-4 py-2.5">
             {error}
           </p>
+        )}
+
+        {/* Loading Skeleton Card */}
+        {loading && (
+          <div className="border border-gray-200 bg-white rounded-xl p-5 shadow-xs space-y-4 animate-pulse">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-gray-200" />
+              <div className="space-y-1.5 flex-1">
+                <div className="h-3.5 bg-gray-200 rounded-md w-1/4" />
+                <div className="h-2.5 bg-gray-100 rounded-md w-1/6" />
+              </div>
+            </div>
+            <div className="space-y-2 pt-1">
+              <div className="h-3.5 bg-gray-200 rounded-md w-full" />
+              <div className="h-3.5 bg-gray-200 rounded-md w-5/6" />
+              <div className="h-3.5 bg-gray-200 rounded-md w-3/4" />
+            </div>
+            <div className="pt-2 flex items-center justify-between text-xs text-gray-500 font-medium">
+              <span className="flex items-center gap-1.5">
+                <svg className="animate-spin h-3.5 w-3.5 text-gray-400" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+                Writing in your style...
+              </span>
+            </div>
+          </div>
         )}
 
         {/* Output */}
@@ -278,5 +322,6 @@ export default function GeneratePage() {
         )}
       </div>
     </div>
+  </div>
   );
 }

@@ -14,6 +14,12 @@ const KEYS = {
   account: "vt_account",
 };
 
+const notifyStorageChanged = () => {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("vt_storage_updated"));
+  }
+};
+
 // Background Cloud Sync - fire and forget
 const syncToCloud = async () => {
   if (!isSupabaseConfigured || typeof window === "undefined") return;
@@ -75,6 +81,7 @@ export const storage = {
   setVoice: (v: VoiceProfile) => {
     localStorage.setItem(KEYS.voice, JSON.stringify(v));
     syncToCloud();
+    notifyStorageChanged();
   },
 
   getHistory: (): GenerationEntry[] => {
@@ -113,6 +120,7 @@ export const storage = {
   setAccount: (a: AccountProfile) => {
     localStorage.setItem(KEYS.account, JSON.stringify(a));
     syncToCloud();
+    notifyStorageChanged();
   },
 
   getTrainedTweets: (): TrainedTweet[] => {
@@ -130,5 +138,21 @@ export const storage = {
     const updated = storage.getTrainedTweets().filter((t) => t.id !== id);
     localStorage.setItem("vt_trained", JSON.stringify(updated));
     syncToCloud();
+  },
+
+  loadPersona: (account: AccountProfile, voice: VoiceProfile, trainedTweets: TrainedTweet[] = []) => {
+    localStorage.setItem(KEYS.account, JSON.stringify(account));
+    localStorage.setItem(KEYS.voice, JSON.stringify(voice));
+    localStorage.setItem("vt_trained", JSON.stringify(trainedTweets));
+    syncToCloud();
+    notifyStorageChanged();
+  },
+
+  resetProfile: () => {
+    if (typeof window === "undefined") return;
+    localStorage.removeItem(KEYS.account);
+    localStorage.removeItem(KEYS.voice);
+    localStorage.removeItem("vt_trained");
+    notifyStorageChanged();
   },
 };

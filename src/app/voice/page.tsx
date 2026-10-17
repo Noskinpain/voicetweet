@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { storage } from '@/lib/storage'
 import { VoiceProfile, AccountProfile } from '@/types'
+import DemoPersonaPicker from '@/components/DemoPersonaPicker'
 
 const VIBES = [
   'Bold & direct',
@@ -74,6 +75,15 @@ export default function VoicePage() {
           The more detail you give, the more it sounds exactly like you.
         </p>
       </div>
+
+      {/* Demo Persona Switcher */}
+      <DemoPersonaPicker
+        currentBio={voice.bio}
+        onPersonaLoaded={(newVoice) => {
+          setVoice(newVoice);
+          setAccount(storage.getAccount());
+        }}
+      />
 
       {/* Interview CTA */}
       {!voice.interviewDone ? (
@@ -264,13 +274,27 @@ export default function VoicePage() {
         />
       </div>
 
-      {/* Save */}
-      <button
-        onClick={save}
-        className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-all text-sm tracking-wide"
-      >
-        {saved ? 'Saved ✓' : 'Save Voice Profile'}
-      </button>
+      {/* Save & Reset */}
+      <div className="flex flex-col sm:flex-row items-center gap-3">
+        <button
+          onClick={save}
+          className="flex-1 w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-all text-sm tracking-wide shadow-xs"
+        >
+          {saved ? 'Saved' : 'Save Voice Profile'}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            storage.resetProfile();
+            setVoice(defaultVoice);
+            setAccount({ name: '', handle: '', email: '' });
+          }}
+          className="w-full sm:w-auto px-4 py-3.5 text-xs font-semibold text-gray-500 hover:text-red-600 hover:bg-red-50 border border-gray-200 rounded-xl transition-all"
+        >
+          Reset Profile
+        </button>
+      </div>
 
     </div>
   )

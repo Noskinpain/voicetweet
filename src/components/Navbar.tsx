@@ -10,12 +10,22 @@ export default function Navbar() {
   const [interviewDone, setInterviewDone] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
+  const refreshProfile = () => {
     const acc = storage.getAccount();
-    if (acc.name) setName(acc.name);
+    setName(acc.name || "");
     const voice = storage.getVoice();
     setInterviewDone(!!voice?.interviewDone);
-  }, []);
+  };
+
+  useEffect(() => {
+    refreshProfile();
+    window.addEventListener("vt_storage_updated", refreshProfile);
+    window.addEventListener("storage", refreshProfile);
+    return () => {
+      window.removeEventListener("vt_storage_updated", refreshProfile);
+      window.removeEventListener("storage", refreshProfile);
+    };
+  }, [path]);
 
   const links = [
     { href: "/generate", label: "Generate" },
