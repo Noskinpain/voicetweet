@@ -9,11 +9,8 @@ export const openrouter = new OpenAI({
   }
 })
 
-// openrouter/free automatically picks the best available free model
-// When you're ready to switch to Claude, just change this one line to:
-// 'anthropic/claude-sonnet-4-5'
+// Reliable active free models on OpenRouter that produce clean text (no reasoning leaks)
 export const MODELS = [
-  'meta-llama/llama-3.3-70b-instruct:free',
-  'google/gemma-3-27b-it:free',
-  'openrouter/free',
-]
+  'nvidia/nemotron-3-ultra-550b-a55b:free',
+  'minimax/minimax-m3.1-flash:free',
+]

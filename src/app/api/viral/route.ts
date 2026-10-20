@@ -3,6 +3,15 @@ import { openrouter, MODELS } from "@/lib/openrouter";
 import { buildSystemPrompt, buildDeepVoiceContext } from "@/lib/prompts";
 import { VoiceProfile, TrainedTweet } from "@/types";
 
+function cleanGeneratedText(raw: string): string {
+  if (!raw) return "";
+  let cleaned = raw
+    .replace(/<think>[\s\S]*?<\/think>/gi, "")
+    .replace(/^(?:\*{0,2}(?:thinking(?:\s+process)?|reasoning|scratchpad)\*{0,2}:?[\s\S]*?\n\n)/i, "")
+    .trim();
+  return cleaned;
+}
+
 async function runWithFallback(messages: any[], tools?: any[]) {
   let lastError: any = null;
   for (const model of MODELS) {
@@ -15,8 +24,16 @@ async function runWithFallback(messages: any[], tools?: any[]) {
       };
       if (tools) params.tools = tools;
       const completion = await openrouter.chat.completions.create(params);
-      return completion.choices[0]?.message?.content ?? "";
+      const choice = completion.choices[0];
+      const rawContent = choice?.message?.content ?? "";
+      const content = cleanGeneratedText(rawContent);
+
+      if (!content || content.startsWith("User Safety:")) {
+        throw new Error(`Model ${model} returned empty or invalid response`);
+      }
+      return content;
     } catch (err: any) {
+      console.warn(`[VoiceTweet Viral] Model ${model} failed:`, err?.message || err);
       lastError = err;
       continue;
     }
@@ -69,15 +86,7 @@ Topics must be specific and current — not generic. Include what is actually be
       const tools = [{ type: "openrouter:web_search" }];
 
       try {
-        const params: any = {
-          model: MODELS[0],
-          messages,
-          max_tokens: 300,
-          temperature: 0.5,
-          tools,
-        };
-        const completion = await openrouter.chat.completions.create(params);
-        const raw = completion.choices[0]?.message?.content ?? "[]";
+        const raw = await runWithFallback(messages, tools);
         const clean = raw.replace(/```json|```/g, "").trim();
         try {
           const parsed = JSON.parse(clean);

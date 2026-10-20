@@ -116,7 +116,7 @@ Your enemy is generic. Your enemy is safe. Your enemy is anything that sounds li
 
 Every single output must feel like it came from a real human who has lived something, thought deeply about it, and is sharing it in their natural voice.
 
-Output ONLY the content. No intro. No explanation. No "Here is your tweet:". Just the raw content.`;
+Output ONLY the final content. No intro. No explanation. No thinking process, scratchpad, character counting, or analysis. Output ONLY the raw content.`;
 }
 
 export function buildUserPrompt(

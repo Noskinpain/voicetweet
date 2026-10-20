@@ -10,6 +10,23 @@ import { VoiceProfile, ToneSettings, OutputFormat, TweetLength, CaptionType } fr
 
 export const maxDuration = 60;
 
+function cleanGeneratedText(raw: string): string {
+  if (!raw) return ''
+  let cleaned = raw
+    // Strip <think>...</think> blocks from reasoning models
+    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+    // Strip reasoning/scratchpad headers if verbalized
+    .replace(/^(?:\*{0,2}(?:thinking(?:\s+process)?|reasoning|scratchpad)\*{0,2}:?[\s\S]*?\n\n)/i, '')
+    .trim()
+
+  // Remove surrounding quotes if the model wrapped the entire tweet in quotes
+  if ((cleaned.startsWith('"') && cleaned.endsWith('"')) || (cleaned.startsWith('“') && cleaned.endsWith('”'))) {
+    cleaned = cleaned.slice(1, -1).trim()
+  }
+
+  return cleaned
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -68,9 +85,19 @@ export async function POST(req: NextRequest) {
           max_tokens: 1024,
           temperature: 0.88,
         })
-        const content = completion.choices[0]?.message?.content ?? ''
+
+        const choice = completion.choices[0]
+        const rawContent = choice?.message?.content ?? ''
+        const content = cleanGeneratedText(rawContent)
+
+        // Validate that we received an actual tweet and not a safety check or empty string
+        if (!content || content.startsWith('User Safety:')) {
+          throw new Error(`Model ${model} returned empty or invalid response`)
+        }
+
         return NextResponse.json({ content, model })
       } catch (err: any) {
+        console.warn(`[VoiceTweet] Model ${model} failed:`, err?.message || err)
         lastError = err
         continue
       }
